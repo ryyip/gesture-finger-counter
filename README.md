@@ -6,7 +6,7 @@ gesture-finger-counter using Hand Tracking and Gesture Recognition
 
 ### Package
 
-pip install cv2
+pip install opencv-python
 
 pip install mediapipe
 
