@@ -13,8 +13,10 @@ gesture-finger-counter using Hand Tracking and Gesture Recognition
 ```
 # For Linux OS
 # Install venv
-manjaro: sudo pacman -S python-virtualenv
-ubuntu: sudo apt-get python-virtualenv
+manjaro: 
+sudo pacman -Sy && sudo pacman -S python-virtualenv
+ubuntu: 
+sudo apt-get update && sudo apt install python-virtualenv
 
 # Version
 virtualenv --version
