@@ -5,7 +5,7 @@ import numpy
 
 def main():
     cap = cv2.VideoCapture(0)
-    # # Set width & height (defalut 640, 480)
+    # # Set width & height (defalut 640, 480) / 设置窗口大小
     # wCam, hCam = 848, 480
     # cap.set(cv2.CAP_PROP_FRAME_WIDTH, wCam)
     # cap.set(cv2.CAP_PROP_FRAME_HEIGHT, hCam)
@@ -19,26 +19,34 @@ def main():
         # Get camera width & height
         imgWidth = img.shape[1]
         imgHeight = img.shape[0]
+        imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        results = hands.process(imgRGB)
+        gestureStr = ''
+
+        # For test: show window size
         if t == 0:
             print(imgWidth,imgHeight)
         t += 1
-        imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        results = hands.process(imgRGB)
-        fingerStr = ''
         
         if results.multi_hand_landmarks:
-            hand = results.multi_hand_landmarks[0]
-
+            # 标注点
             for handLms in results.multi_hand_landmarks:
                 mpDraw.draw_landmarks(img, handLms, mpHands.HAND_CONNECTIONS)
+                # # For Test: show the 8th point (x,y) location
                 # for i, lm in enumerate(handLms.landmark):
                 #     if i == 8:
                 #         print(i, int(lm.x*imgWidth), int(lm.y*imgHeight))
+
+            # 获取手掌每个点的3维坐标相对值
+            hand = results.multi_hand_landmarks[0]
+            
+            # 获取将点的3维坐标相对值转化为2维(x,y)绝对值坐标
             listLms = []
             for i in range(21):
                 posX = hand.landmark[i].x*imgWidth
                 posY = hand.landmark[i].y*imgHeight
                 listLms.append([int(posX),int(posY)])
+                
             # construct convex hull / 构建凸包
             listLms = numpy.array(listLms,dtype=numpy.int32)
             hullIndex = [0,1,2,3,6,10,14,19,18,17,10]
@@ -55,20 +63,21 @@ def main():
                 pt = (int(listLms[i][0]), int(listLms[i][1]))
                 # If outside the convex hull / 是否在凸包外面
                 dist = cv2.pointPolygonTest(hull,pt,True)
+                # < 0 out of the convex hull / 表示在凸包外
                 if dist < 0:
                     outFingerIndex.append(i)
             
-            fingerStr = getStrByOutIndex(outFingerIndex, listLms)
+            gestureStr = getGestureStrByOutIndex(outFingerIndex, listLms)
 
-        cv2.putText(img, str(fingerStr), (25, 50), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 0), 3)
+        cv2.putText(img, str(gestureStr), (25, 50), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 0), 3)
         cv2.imshow("Image", img)
         
         # Input q/Esc exit
         if cv2.waitKey(1) == ord('q') or cv2.waitKey(1) == 27:
             break
 
-
-def getStrByOutIndex(outFingerIndex, listLms):
+# Get gesture string by out index
+def getGestureStrByOutIndex(outFingerIndex, listLms):
     length = len(outFingerIndex)
     res = ''
     
@@ -113,10 +122,10 @@ def getStrByOutIndex(outFingerIndex, listLms):
     return res
 
 # Calculate the angle betweet three point
-def getAngle(a, b, c):
-    ang = math.degrees(math.atan2(c[1]-b[1], c[0]-b[0]) - math.atan2(a[1]-b[1], a[0]-b[0]))
-    return abs(ang)
-    # return ang + 360 if ang < 0 else ang
+def getAngle(pointA, pointB, pointC):
+    angle = math.degrees(math.atan2(pointC[1]-pointB[1], pointC[0]-pointB[0]) - math.atan2(pointA[1]-pointB[1], pointA[0]-pointB[0]))
+    return abs(angle)
+    # return angle + 360 if angle < 0 else angle
 
 def getAngle2(pointA, pointB, pointC):
     # vector1 from B to A 
