@@ -14,4 +14,4 @@ pip install mediapipe
 
 ### Hand Landmark Model
 
-<img src="https://google.github.io/mediapipe/images/mobile/hand_landmarks.png" alt="alt" style="zoom:50%;" />
+![hand-landmarks](hand-landmarks.png)
