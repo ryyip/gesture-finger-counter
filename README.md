@@ -4,7 +4,7 @@ gesture-finger-counter using Hand Tracking and Gesture Recognition
 
 | Package       | Version |
 | :------------ | ------- |
-| Python        | 3.11.3  |
+| python        | 3.11.3  |
 | opencv-python | 4.8.1   |
 | mediapipe     | 0.10.8  |
 
