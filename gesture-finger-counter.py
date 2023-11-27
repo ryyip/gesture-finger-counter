@@ -127,15 +127,5 @@ def getAngle(pointA, pointB, pointC):
     return abs(angle)
     # return angle + 360 if angle < 0 else angle
 
-def getAngle2(pointA, pointB, pointC):
-    # vector1 from B to A 
-    v1 = pointA - pointB
-    # vector2 from B to C
-    v2 = pointC - pointB
-    # the angle between v1 and v2
-    angle = numpy.dot(v1,v2)/(numpy.sqrt(numpy.sum(v1*v1))*numpy.sqrt(numpy.sum(v2*v2)))
-    angle = numpy.arccos(angle)/3.14*180
-    return angle
-
 if __name__ == '__main__':
     main()
